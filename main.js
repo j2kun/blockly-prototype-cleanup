@@ -17,8 +17,10 @@ function toCartesianX(x) { return x - originX; }
 function toCartesianY(y) { return -y + originY; }
 
 let blocks = [
-  new Rectangle(new Vector(-200, 100), 300, 75, {'fill': 'green'}),
-  new Rectangle(new Vector(-300, -100), 100, 100, {'fill': 'red'}),
+  new Rectangle(new Vector(-200, 100), 100, 25, {'fill': 'green'}),
+  new Rectangle(new Vector(-300, -100), 50, 50, {'fill': 'red'}),
+  new Rectangle(new Vector(-320, -130), 70, 20, {'fill': 'red'}),
+  new Rectangle(new Vector(-200, -140), 90, 60, {'fill': 'red'}),
 ];
 
 

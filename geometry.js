@@ -1,7 +1,3 @@
-
-var epsilon = 0.0001;
-
-
 class Vector {
   constructor(x, y, attrs) {
     this.x = x;
