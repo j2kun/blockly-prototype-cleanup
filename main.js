@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { Vector, Rectangle } from './geometry';
+import * as cleanup from './cleanup';
 
 let width = 800;
 let height = 600;
@@ -16,23 +17,20 @@ function fromCartesianY(y) { return originY - y; }
 function toCartesianX(x) { return x - originX; }
 function toCartesianY(y) { return -y + originY; }
 
+let topLeft = new Vector(toCartesianX(0), toCartesianY(0));
+
 let blocks = [
-  new Rectangle(new Vector(-200, 100), 100, 25, {'fill': 'green'}),
-  new Rectangle(new Vector(-300, -100), 50, 50, {'fill': 'red'}),
-  new Rectangle(new Vector(-320, -130), 70, 20, {'fill': 'red'}),
-  new Rectangle(new Vector(-200, -140), 90, 60, {'fill': 'red'}),
+  new Rectangle(new Vector(-200, 100), 100, 25, {'fill': 'green', 'id': 0}),
+  new Rectangle(new Vector(-300, -100), 50, 50, {'fill': 'red', 'id': 1}),
+  new Rectangle(new Vector(-320, -130), 70, 20, {'fill': 'blue', 'id': 2}),
+  new Rectangle(new Vector(-200, -140), 90, 60, {'fill': 'purple', 'id': 3}),
 ];
 
 
 // Set up drag handlers
-function dragged(d, rect) {
-  console.log("Dragging");
+function dragged(d) {
   d.topLeft.x += d3.event.dx;
   d.topLeft.y -= d3.event.dy;
-
-  rect.attr("x", fromCartesianX(d.topLeft.x))
-      .attr("y", fromCartesianY(d.topLeft.y));
-
   updateBlocksSVG(blocks);
 }
 
@@ -50,13 +48,27 @@ function updateBlocksSVG(rectangles) {
     .attr("stroke-width", 4)
     .attr("fill", d => d.attrs['fill'])
     .attr("class", "block")
-    .call(d3.drag().on("drag", function(d) {
-      dragged(d, blockContainers);
-    }));
+    .call(d3.drag().on("drag", dragged));
 
   blockContainers.exit().remove();
   return blockContainers;
 }
 
 
-let blocksSVG = updateBlocksSVG(blocks);
+function doCleanup() {
+  let newPositionMap = cleanup.cleanupTransportationLP(blocks, topLeft);
+  console.log(newPositionMap);
+
+  for (let block of blocks) {
+    let id = block.attrs['id'];
+    let newPosn = newPositionMap[id];
+    block.topLeft.x = newPosn.x;
+    block.topLeft.y = newPosn.y;
+  }
+
+  updateBlocksSVG(blocks);
+}
+
+
+updateBlocksSVG(blocks);
+d3.select("#cleanup_button").on('click', doCleanup);
