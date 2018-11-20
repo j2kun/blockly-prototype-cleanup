@@ -10,7 +10,8 @@
     }
   ],
   "scripts": {
-    "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js"
+    "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
+    "test": "jasmine"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",
@@ -27,6 +28,8 @@
   "dependencies": {
     "d3": "^4.7.4",
     "d3-drag": "^1.2.1",
+    "immutable": "^4.0.0-rc.12",
+    "jasmine": "^3.3.0",
     "javascript-lp-solver": "^0.4.5",
     "jquery": "^3.1.1"
   }
