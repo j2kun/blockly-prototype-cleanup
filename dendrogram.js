@@ -42,7 +42,7 @@ class AgglomerativeClustering {
   }
 
   /** Return a dendrogram of clusterings for the given set of points. */
-  cluster(points) {
+  dendrogram(points) {
     if (!points || points.length == 0) {
       return null;
     }

@@ -58,7 +58,7 @@ describe("AgglomerativeClustering", function() {
   };
 
   let clusterer = new AgglomerativeClustering(distanceFn);
-  let dendrogram = clusterer.cluster(points);
+  let dendrogram = clusterer.dendrogram(points);
 
   it("should have all values in the root", function() {
     expect(dendrogram.root.values).toEqualImmutable(new Set([1, 2, 3, 4]));
