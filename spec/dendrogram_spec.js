@@ -1,4 +1,8 @@
-const { Set, List, } = require('immutable');
+const {
+  List,
+  Map,
+  Set,
+} = require('immutable');
 const {
   AgglomerativeClustering,
   DendrogramNode,
@@ -7,6 +11,7 @@ const {
 const {
   DistanceCache,
 } = require('../cache');
+
 
 describe("DendrogramNode", function() {
   var node;
@@ -50,7 +55,7 @@ describe("AgglomerativeClustering", function() {
   let distanceFn = function (values1, values2) {
     return hardCodedDistanceMap.getOrCompute(
       values1, values2, (a, b) => 100);
-  }
+  };
 
   let clusterer = new AgglomerativeClustering(distanceFn);
   let dendrogram = clusterer.cluster(points);
@@ -59,20 +64,38 @@ describe("AgglomerativeClustering", function() {
     expect(dendrogram.root.values).toEqualImmutable(new Set([1, 2, 3, 4]));
   });
 
+  let expectedLevelSets = new List([
+    new Set([new Set([1]), new Set([2]), new Set([3]), new Set([4])]),
+    new Set([new Set([2, 3]), new Set([1]), new Set([4])]),
+    new Set([new Set([2, 3, 4]), new Set([1])]),
+    new Set([new Set([1, 2, 3, 4])]),
+  ]);
+
   it("should traverse level sets in merge order", function() {
-    let expectedLevelSets = new List([
-      new Set([new Set([1]), new Set([2]), new Set([3]), new Set([4])]),
-      new Set([new Set([2, 3]), new Set([1]), new Set([4])]),
-      new Set([new Set([2, 3, 4]), new Set([1])]),
-      new Set([new Set([1, 2, 3, 4])]),
-    ]);
     let actualLevelSets = new List();
 
     for (let levelSet of dendrogram.levelSets()) {
       actualLevelSets = actualLevelSets.push(
-        new Set(levelSet.map(x => x.values)));
+        levelSet.map(x => x.values));
     }
 
     expect(actualLevelSets).toEqualImmutable(expectedLevelSets);
+  });
+
+  it("should choose maximal level sets appropriately", function() {
+    let hardCodedLevelSetFnMap = new Map()
+      .set(expectedLevelSets.get(0), 1)
+      .set(expectedLevelSets.get(1), 2)
+      .set(expectedLevelSets.get(2), 3)
+      .set(expectedLevelSets.get(3), 1);
+
+    let levelSetFn = function (levelSet) {
+      let key = levelSet.map(x => x.values)
+      return hardCodedLevelSetFnMap.has(key)
+        ? hardCodedLevelSetFnMap.get(key): -1;
+    };
+
+    expect(dendrogram.levelSetMaximizing(levelSetFn).map(x => x.values))
+      .toEqualImmutable(expectedLevelSets.get(2));
   });
 });

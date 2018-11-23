@@ -6,9 +6,33 @@ const { combinations } = require('./combinations');
  * A port of python's min() supporting a key for comparisons
  */
 function min(array, key) {
-  return array.map(x => [x, key(x)]).reduce(
-    (eltKey1, eltKey2) => (eltKey1[1] > eltKey2[1] ? eltKey2 : eltKey1)
-  )[0];
+  let best = null;
+  let bestValue = null;
+  for (let elt of array) {
+    let eltValue = key(elt);
+    if (bestValue == null || eltValue < bestValue) {
+      bestValue = eltValue;
+      best = elt;
+    }
+  }
+  return best;
+}
+
+
+/**
+ * A port of python's max() supporting a key for comparisons
+ */
+function max(array, key) {
+  let best = null;
+  let bestValue = null;
+  for (let elt of array) {
+    let eltValue = key(elt);
+    if (bestValue == null || eltValue > bestValue) {
+      bestValue = eltValue;
+      best = elt;
+    }
+  }
+  return best;
 }
 
 
@@ -63,6 +87,10 @@ class Dendrogram {
   constructor(root, traversal) {
     this.root = root;
     this.traversal = traversal;
+  }
+
+  levelSetMaximizing(levelSetFn) {
+    return max([...this.levelSets()], levelSetFn);
   }
 
   *levelSets() {
