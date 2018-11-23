@@ -27,7 +27,7 @@ describe("combinations", function() {
   });
 
   it("handles immutablejs set correctly", function() {
-    expect(combinations(new Set([1,2,3,4]), 3)).toEqual(
+    expect(combinations(Set([1,2,3,4]), 3)).toEqual(
       [[1,2,3], [1,2,4], [1,3,4], [2,3,4]]);
   });
 });

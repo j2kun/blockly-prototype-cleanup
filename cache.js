@@ -22,7 +22,7 @@ class DistanceCache {
 
   getOrCompute(a, b, fn) {
     let value = this.get(a, b);
-    if (!value) {
+    if (value == null || value == undefined) {
       value = fn(a, b);
       this.put(a, b, value);
     }
@@ -32,6 +32,10 @@ class DistanceCache {
   put(a, b, value) {
     this.distances = this.distances.set(this.key(a, b), value);
     return this;
+  }
+
+  toString() {
+    return this.distances.toString();
   }
 }
 

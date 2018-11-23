@@ -17,7 +17,7 @@ describe("DendrogramNode", function() {
   var node;
 
   beforeEach(function() {
-    node = new DendrogramNode(new Set([1, 2, 3]));
+    node = new DendrogramNode(Set([1, 2, 3]));
   });
 
   it("should start as a leaf", function() {
@@ -25,12 +25,12 @@ describe("DendrogramNode", function() {
   });
 
   describe("when merging", function() {
-    let node = new DendrogramNode(new Set([1, 2, 3]));
-    let otherNode = new DendrogramNode(new Set([4,5,6]));
+    let node = new DendrogramNode(Set([1, 2, 3]));
+    let otherNode = new DendrogramNode(Set([4,5,6]));
     let mergedNode = node.merge(otherNode);
 
     it("should merge value sets", function() {
-      expect(mergedNode.values).toEqual(new Set([1, 2, 3, 4, 5, 6]));
+      expect(mergedNode.values).toEqual(Set([1, 2, 3, 4, 5, 6]));
     });
 
     it("should set the children on the merged node", function() {
@@ -48,9 +48,9 @@ describe("DendrogramNode", function() {
 describe("AgglomerativeHierarchy", function() {
   let points = [1,2,3,4];
   let hardCodedDistanceMap = new DistanceCache()
-    .put(new Set([2]), new Set([3]), 1)
-    .put(new Set([2,3]), new Set([4]), 1)
-    .put(new Set([2,3,4]), new Set([1]), 1);
+    .put(Set([2]), Set([3]), 1)
+    .put(Set([2,3]), Set([4]), 1)
+    .put(Set([2,3,4]), Set([1]), 1);
 
   let distanceFn = function (node1, node2) {
     return hardCodedDistanceMap.getOrCompute(
@@ -61,18 +61,18 @@ describe("AgglomerativeHierarchy", function() {
   let dendrogram = clusterer.dendrogram(points);
 
   it("should have all values in the root", function() {
-    expect(dendrogram.root.values).toEqualImmutable(new Set([1, 2, 3, 4]));
+    expect(dendrogram.root.values).toEqualImmutable(Set([1, 2, 3, 4]));
   });
 
-  let expectedLevelSets = new List([
-    new Set([new Set([1]), new Set([2]), new Set([3]), new Set([4])]),
-    new Set([new Set([2, 3]), new Set([1]), new Set([4])]),
-    new Set([new Set([2, 3, 4]), new Set([1])]),
-    new Set([new Set([1, 2, 3, 4])]),
+  let expectedLevelSets = List([
+    Set([Set([1]), Set([2]), Set([3]), Set([4])]),
+    Set([Set([2, 3]), Set([1]), Set([4])]),
+    Set([Set([2, 3, 4]), Set([1])]),
+    Set([Set([1, 2, 3, 4])]),
   ]);
 
   it("should traverse level sets in merge order", function() {
-    let actualLevelSets = new List();
+    let actualLevelSets = List();
 
     for (let levelSet of dendrogram.levelSets()) {
       actualLevelSets = actualLevelSets.push(
@@ -83,7 +83,7 @@ describe("AgglomerativeHierarchy", function() {
   });
 
   it("should choose maximal level sets appropriately", function() {
-    let hardCodedLevelSetFnMap = new Map()
+    let hardCodedLevelSetFnMap = Map()
       .set(expectedLevelSets.get(0), 1)
       .set(expectedLevelSets.get(1), 2)
       .set(expectedLevelSets.get(2), 3)

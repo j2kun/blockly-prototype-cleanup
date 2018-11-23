@@ -1,3 +1,4 @@
+const { Set } = require('immutable');
 const { combinations } = require('./combinations');
 const { DistanceCache } = require('./cache');
 const { AgglomerativeHierarchy } = require('./dendrogram');
@@ -5,7 +6,7 @@ const { AgglomerativeHierarchy } = require('./dendrogram');
 
 function euclideanDistance(x, y) {
   // Euclidean distance
-  x.map((elt, i) => Math.pow(elt - y[i], 2)).reduce((a, b) => a+b, 0);
+  return x.map((elt, i) => Math.pow(elt - y.get(i), 2)).reduce((a, b) => a+b, 0);
 };
 
 
@@ -23,11 +24,15 @@ class WardClustering {
     let distanceCache = new DistanceCache();
     combinations(points, 2).forEach(pair => {
       distanceCache.put(
-        pair[0], pair[1], euclideanDistance(pair[0], pair[1]));
+        Set([pair[0]]), Set([pair[1]]), euclideanDistance(pair[0], pair[1]));
     });
     this.distanceCache = distanceCache;
   }
 
+  /**
+   * Compute the distance between two clusters using the Lance-Williams
+   * recursive method.
+   */
   recursiveDistance(node1, node2) {
     if (node1.isLeaf() && node2.isLeaf()) {
       throw "Distance cache should have prepopulated all pairwise node "
@@ -63,10 +68,6 @@ class WardClustering {
     return coeff13 * d13 + coeff23 * d23 - coeff12 * d12;
   }
 
-  /**
-   * Compute the distance between two clusters using the Lance-Williams
-   * recursive method.
-   */
   distance(node1, node2) {
     return this.distanceCache.getOrCompute(
       node1.values,
@@ -77,6 +78,16 @@ class WardClustering {
 
   cluster(points) {
     this.initializeCache(points);
-    let dendrogram = (new AgglomerativeHierarchy((x, y) => this.distance))
+    let dendrogram = (new AgglomerativeHierarchy(
+      (x, y) => this.distance(x, y)))
+      .dendrogram(points);
+
+    throw 'Not implemented';
+    // TODO: add choice of level set maximizer.
+    return dendrogram.levelSetMaximizing();
   }
 }
+
+module.exports = {
+  WardClustering,
+};
