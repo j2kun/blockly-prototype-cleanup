@@ -1,7 +1,7 @@
 const { Map, Set } = require('immutable');
 
 /**
- * A simple cache whose keys are pairs of values.
+ * A simple cache whose keys are unordered pairs of values.
  */
 class DistanceCache {
   constructor() {

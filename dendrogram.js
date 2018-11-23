@@ -1,3 +1,6 @@
+const { Set } = require('immutable');
+
+
 class Dendrogram {
   /**
    * Class for a Dendrogram.
@@ -16,7 +19,47 @@ class Dendrogram {
 
 
 class DendrogramTraversal {
+  constructor() {
+    this.mutations = [];
+  }
 
+  addMutation(mutation) {
+    this.mutations.append(mutation);
+  }
+
+  forEach(leafSet, levelSetFn) {
+
+  }
+}
+
+class TraversalMutation {
+  /**
+   * A class to store a mutation of a level set via the removal and addition
+   * of some nodes. For a typical dendrogram agglomeration, a mutation merges
+   * two nodes, so nodesToRemove has size two, and nodesToAdd is the merged
+   * node.
+   */
+  constructor(nodesToRemove, nodesToAdd) {
+    this.nodesToRemove = nodesToRemove;
+    this.nodesToAdd = nodesToAdd;
+  }
+
+  /**
+   * Mutate a set of DendrogramNodes according to the data of this mutation.
+   *
+   * @param levelSet: a set of dendrogram nodes to mutate.
+   */
+  mutate(levelSet) {
+    return levelSet.withMutations(
+      nodeSet => {
+        this.nodesToRemove.forEach(
+          node => { nodeSet.remove(node); }
+        );
+        this.nodesToAdd.forEach(
+          node => { nodeSet.add(node); }
+        );
+      });
+  }
 }
 
 
@@ -32,7 +75,7 @@ class DendrogramNode {
    * @constructor
    */
   constructor(values, leftChild, rightChild) {
-    this.values = values;
+    this.values = Set.of(...values);
     this.leftChild = leftChild;
     this.rightChild = rightChild;
     this.parent = null;
@@ -43,7 +86,7 @@ class DendrogramNode {
   }
 
   isLeaf() {
-    return !this.leftChild and !this.rightChild;
+    return !this.leftChild && !this.rightChild;
   }
 
   /*
@@ -52,7 +95,7 @@ class DendrogramNode {
    * The node with the smaller value set will be the left child.
    */
   merge(otherNode) {
-    let mergedValues = this.values.concat(otherNode.values);
+    let mergedValues = this.values.union(otherNode.values);
     let parent = (this.values.length > otherNode.values.length
         ? new DendrogramNode(mergedValues, otherNode, this)
         : new DendrogramNode(mergedValues, this, otherNode));
@@ -62,3 +105,9 @@ class DendrogramNode {
     return parent;
   }
 }
+
+module.exports = {
+  Dendrogram,
+  DendrogramNode,
+  DendrogramTraversal,
+};

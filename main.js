@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { Vector, Rectangle } from './geometry';
 import * as cleanup from './cleanup';
+import * as dendrogram from './dendrogram';
 
 let width = 800;
 let height = 600;
