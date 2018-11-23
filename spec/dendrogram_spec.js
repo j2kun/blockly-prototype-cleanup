@@ -52,9 +52,9 @@ describe("AgglomerativeClustering", function() {
     .put(new Set([2,3]), new Set([4]), 1)
     .put(new Set([2,3,4]), new Set([1]), 1);
 
-  let distanceFn = function (values1, values2) {
+  let distanceFn = function (node1, node2) {
     return hardCodedDistanceMap.getOrCompute(
-      values1, values2, (a, b) => 100);
+      node1.values, node2.values, (a, b) => 100);
   };
 
   let clusterer = new AgglomerativeClustering(distanceFn);

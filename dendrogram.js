@@ -59,10 +59,11 @@ class AgglomerativeClustering {
       // find the next pair to merge
       let minPair = min(
         combinations(nodes, 2),
-        pair => this.distanceFn(pair[0].values, pair[1].values));
+        pair => this.distanceFn(pair[0], pair[1]));
 
       let n1 = minPair[0], n2 = minPair[1];
-      let mergeMutation = new LevelSetMutation([n1, n2], [n1.merge(n2)]);
+      let parent = n1.merge(n2);
+      let mergeMutation = new LevelSetMutation([n1, n2], [parent]);
 
       traversal.addMutation(mergeMutation);
       nodes = mergeMutation.mutate(nodes);
