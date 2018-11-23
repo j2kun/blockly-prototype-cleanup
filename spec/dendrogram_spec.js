@@ -4,7 +4,7 @@ const {
   Set,
 } = require('immutable');
 const {
-  AgglomerativeClustering,
+  AgglomerativeHierarchy,
   DendrogramNode,
   DendrogramTraversal,
 } = require('../dendrogram');
@@ -45,7 +45,7 @@ describe("DendrogramNode", function() {
 });
 
 
-describe("AgglomerativeClustering", function() {
+describe("AgglomerativeHierarchy", function() {
   let points = [1,2,3,4];
   let hardCodedDistanceMap = new DistanceCache()
     .put(new Set([2]), new Set([3]), 1)
@@ -57,7 +57,7 @@ describe("AgglomerativeClustering", function() {
       node1.values, node2.values, (a, b) => 100);
   };
 
-  let clusterer = new AgglomerativeClustering(distanceFn);
+  let clusterer = new AgglomerativeHierarchy(distanceFn);
   let dendrogram = clusterer.dendrogram(points);
 
   it("should have all values in the root", function() {

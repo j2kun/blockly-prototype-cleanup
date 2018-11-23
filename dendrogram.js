@@ -36,7 +36,7 @@ function max(array, key) {
 }
 
 
-class AgglomerativeClustering {
+class AgglomerativeHierarchy {
   constructor(distanceFn) {
     this.distanceFn = distanceFn;
   }
@@ -201,7 +201,7 @@ class DendrogramNode {
 }
 
 module.exports = {
-  AgglomerativeClustering,
+  AgglomerativeHierarchy,
   Dendrogram,
   DendrogramNode,
 };
