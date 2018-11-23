@@ -31,6 +31,7 @@ class DistanceCache {
 
   put(a, b, value) {
     this.distances = this.distances.set(this.key(a, b), value);
+    return this;
   }
 }
 

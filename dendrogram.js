@@ -1,4 +1,53 @@
 const { Set } = require('immutable');
+const { combinations } = require('./combinations');
+
+
+/**
+ * A port of python's min() supporting a key for comparisons
+ */
+function min(array, key) {
+  return array.map(x => [x, key(x)]).reduce(
+    (eltKey1, eltKey2) => (eltKey1[1] > eltKey2[1] ? eltKey2 : eltKey1)
+  )[0];
+}
+
+
+class AgglomerativeClustering {
+  constructor(distanceFn) {
+    this.distanceFn = distanceFn;
+  }
+
+  /** Return a dendrogram of clusterings for the given set of points. */
+  cluster(points) {
+    if (!points || points.length == 0) {
+      return null;
+    }
+
+    // nodes start as leaves, and are merged at each step according
+    // to which pair is closest by the distance function.
+    let nodes = new Set(points.map(x => new DendrogramNode([x])));
+
+    // Keep track of the merges at each step to be able to iterate over
+    // the level sets later to choose the number of clusters.
+    let traversal = new DendrogramTraversal(nodes);
+
+    while (nodes.size > 1) {
+      // find the next pair to merge
+      let minPair = min(
+        combinations(nodes, 2),
+        pair => this.distanceFn(pair[0].values, pair[1].values));
+
+      let n1 = minPair[0], n2 = minPair[1];
+      let mergeMutation = new LevelSetMutation([n1, n2], [n1.merge(n2)]);
+
+      traversal.addMutation(mergeMutation);
+      nodes = mergeMutation.mutate(nodes);
+    }
+
+    let root = nodes.values().next().value;
+    return new Dendrogram(root, traversal);
+  }
+}
 
 
 class Dendrogram {
@@ -15,24 +64,36 @@ class Dendrogram {
     this.root = root;
     this.traversal = traversal;
   }
+
+  *levelSets() {
+    for (let val of this.traversal.iterator()) {
+      yield val;
+    }
+  }
 }
 
 
 class DendrogramTraversal {
-  constructor() {
+  constructor(leaves) {
+    this.leaves = leaves;
     this.mutations = [];
   }
 
   addMutation(mutation) {
-    this.mutations.append(mutation);
+    this.mutations.push(mutation);
   }
 
-  forEach(leafSet, levelSetFn) {
-
+  *iterator() {
+    let current = this.leaves;
+    yield current;
+    for (let mutation of this.mutations) {
+      current = mutation.mutate(current);
+      yield current;
+    }
   }
 }
 
-class TraversalMutation {
+class LevelSetMutation {
   /**
    * A class to store a mutation of a level set via the removal and addition
    * of some nodes. For a typical dendrogram agglomeration, a mutation merges
@@ -104,10 +165,14 @@ class DendrogramNode {
     otherNode.setParent(parent);
     return parent;
   }
+
+  toString() {
+    return "Node(" + this.values + ")";
+  }
 }
 
 module.exports = {
+  AgglomerativeClustering,
   Dendrogram,
   DendrogramNode,
-  DendrogramTraversal,
 };
