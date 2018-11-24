@@ -1,7 +1,31 @@
 const { Set, List } = require('immutable');
 const {
   WardClustering,
+  euclideanDistance,
 } = require('../clustering');
+
+var TOLERANCE = 1e-10;
+
+describe("euclideanDistance", function() {
+  it("should be correct for the same point", function() {
+    let point = List([1, 2]);
+    expect(euclideanDistance(point, point)).toBeCloseTo(0.0, TOLERANCE);
+  });
+
+  it("should be correct for simple points", function() {
+    let point1 = List([1, 2]);
+    let point2 = List([2, 1]);
+    expect(euclideanDistance(point1, point2))
+      .toBeCloseTo(Math.sqrt(2), TOLERANCE);
+  });
+
+  it("should be correct for far points", function() {
+    let point1 = List([11, 12]);
+    let point2 = List([2, 1]);
+    expect(euclideanDistance(point1, point2))
+      .toBeCloseTo(Math.sqrt(121 + 81), TOLERANCE);
+  });
+});
 
 
 describe("WardClustering", function() {

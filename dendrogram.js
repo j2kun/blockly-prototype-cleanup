@@ -62,6 +62,7 @@ class AgglomerativeHierarchy {
         pair => this.distanceFn(pair[0], pair[1]));
 
       let n1 = minPair[0], n2 = minPair[1];
+      console.log("Merging " + n1 + " and " + n2);
       let parent = n1.merge(n2);
       let mergeMutation = new LevelSetMutation([n1, n2], [parent]);
 
@@ -90,8 +91,16 @@ class Dendrogram {
     this.traversal = traversal;
   }
 
+  /**
+   * Return the level set of this dendrogram (among those produced
+   * by this.traversal) which maximizes the given argument function.
+   * This argument function must accept as input a Set whose members
+   * are DendrogramNodes whose values are again Sets of the base points
+   * contained in that node, and output a number.
+   */
   levelSetMaximizing(levelSetFn) {
-    return max([...this.levelSets()], levelSetFn);
+    let allLevelSets = [...this.levelSets()];
+    return max(allLevelSets.slice(0, allLevelSets.length - 1), levelSetFn);
   }
 
   *levelSets() {
