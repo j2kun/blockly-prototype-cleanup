@@ -62,7 +62,7 @@ class AgglomerativeHierarchy {
         pair => this.distanceFn(pair[0], pair[1]));
 
       let n1 = minPair[0], n2 = minPair[1];
-      console.log("Merging " + n1 + " and " + n2);
+      // console.log("Merging " + n1 + " and " + n2);
       let parent = n1.merge(n2);
       let mergeMutation = new LevelSetMutation([n1, n2], [parent]);
 
