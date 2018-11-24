@@ -7,21 +7,16 @@ var SUM = (a, b) => a + b;
 var EPSILON = 1e-9;
 
 
-function euclideanDistance(x, y) {
-  let val = 0;
-  let i = 0;
-  for (let xi of x) {
-    yi = y.get(i);
-    val += (xi - yi) * (xi - yi);
-    i++;
-  }
-  return Math.sqrt(val);
+function euclideanDistance(p1, p2) {
+  let dx = (p1.x - p2.x);
+  let dy = (p1.y - p2.y);
+  return Math.sqrt(dx * dx + dy * dy);
 };
 
 
 class WardClustering {
   constructor(pointDistanceFn) {
-    if (pointDistanceFn == null) {
+    if (pointDistanceFn == null || pointDistanceFn == undefined) {
       pointDistanceFn = euclideanDistance;
     }
 
@@ -87,6 +82,14 @@ class WardClustering {
       (a, b) => this.recursiveDistance(node1, node2));
   }
 
+  /**
+   * Cluster the input points using Ward's method.
+   *
+   * @param points: an iterable of objects with `x` and `y` attributes.
+   * @return a Set of DendrogramNode representing the clustering, and
+   * whose .values attributes contain subsets of the input points
+   * corresponding to the clusters.
+   */
   cluster(points) {
     this.initializeCache(points);
     let dendrogram = (new AgglomerativeHierarchy(
