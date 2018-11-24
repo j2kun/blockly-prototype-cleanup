@@ -1,3 +1,4 @@
+require("regenerator-runtime/runtime");
 const { Set } = require('immutable');
 const { combinations } = require('./combinations');
 

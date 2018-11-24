@@ -15,7 +15,7 @@ gulp.task('build', function () {
     debug: true
   });
 
-  return b.transform("babelify", {presets: ["es2015"]})
+  return b.transform("babelify", {presets: ["env"]})
     .bundle()
     .pipe(source('main.bundle.js'))
         .on('error', gutil.log)
