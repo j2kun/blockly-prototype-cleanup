@@ -71,7 +71,7 @@ function cleanup(blocks, canvasTopLeft, rowSpacing, columnSpacing) {
 
     for (let block of cluster) {
       idToPositionMap[block.attrs.id] = new Vector(x, y);
-      y += block.height + rowSpacing;
+      y += -(block.height + rowSpacing);
     }
 
     let offsetToNextColumn = new Vector(cluster[0].width + columnSpacing, 0);
