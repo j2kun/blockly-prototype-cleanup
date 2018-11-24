@@ -29,7 +29,9 @@ class WardClustering {
     let distanceCache = new DistanceCache();
     combinations(points, 2).forEach(pair => {
       distanceCache.put(
-        Set([pair[0]]), Set([pair[1]]), euclideanDistance(pair[0], pair[1]));
+        Set([pair[0]]),
+        Set([pair[1]]),
+        this.pointDistanceFn(pair[0], pair[1]));
     });
     this.distanceCache = distanceCache;
   }
@@ -75,11 +77,17 @@ class WardClustering {
   }
 
   distance(node1, node2) {
-    return this.distanceCache.getOrCompute(
+    let distance = this.distanceCache.getOrCompute(
       node1.values,
       node2.values,
       // intentionally ignore (a,b) since we need the node children
       (a, b) => this.recursiveDistance(node1, node2));
+
+    if (isNaN(distance)) {
+      throw 'Distance was NaN between ' + node1 + ' and ' + node2;
+    }
+
+    return distance;
   }
 
   /**
@@ -92,6 +100,7 @@ class WardClustering {
    */
   cluster(points) {
     this.initializeCache(points);
+    // console.log(this.distanceCache);
     let dendrogram = (new AgglomerativeHierarchy(
       (x, y) => this.distance(x, y)))
       .dendrogram(points);
@@ -147,7 +156,7 @@ class SilhouetteScore {
       .toList();
 
     let score = 1.0 * singlePointScores.reduce(SUM, 0) / singlePointScores.size;
-    console.log("Score " + score + " for level set " + levelSet);
+    // console.log("Score " + score + " for level set " + levelSet);
     return score;
   }
 
@@ -186,7 +195,7 @@ class SilhouetteScore {
     let denominator = Math.max(withinClusterAverage, minAcrossClusterAverage);
     if (minAcrossClusterAverage < EPSILON) {
       console.log(acrossClusterAverages);
-      throw 'wat';
+      throw 'IllegalState minAcrossClusterAverage = ' + minAcrossClusterAverage;
     }
     if (Math.abs(denominator) < EPSILON) {
       return 0.0;
