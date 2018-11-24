@@ -16,7 +16,7 @@
   "devDependencies": {
     "babel-cli": "^6.22.2",
     "babel-core": "^6.22.1",
-    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-env": "^1.7.0",
     "babelify": "^7.3.0",
     "browserify": "^14.1.0",
     "gulp": "^3.9.1",
@@ -26,12 +26,16 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
     "d3": "^4.7.4",
     "d3-drag": "^1.2.1",
     "immutable": "^4.0.0-rc.12",
     "jasmine": "^3.3.0",
+    "jasmine-core": "^3.3.0",
     "jasmine-immutable-matchers": "^2.0.1",
     "javascript-lp-solver": "^0.4.5",
-    "jquery": "^3.1.1"
+    "jquery": "^3.1.1",
+    "regenerator-runtime": "^0.13.1"
   }
 }
