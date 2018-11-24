@@ -42,6 +42,23 @@ class Vector {
     return this.preservingAttrs((this.x + b.x) / 2, (this.y + b.y) / 2);
   }
 
+  compareTo(other) {
+    // (x, y) lex comparator
+    if (this.x < other.x) {
+      return -1;
+    } else if (this.x > other.x) {
+      return 1;
+    } else {
+      if (this.y < other.y) {
+        return -1;
+      } else if (this.y > other.y) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  }
+
   toString() {
     return "[" + this.x + ", " + this.y + "]";
   }
@@ -63,6 +80,11 @@ class Rectangle {
 
   center() {
     return this.bottomRight().midpoint(this.topLeft);
+  }
+
+  toString() {
+    return ("Rect(" + this.topLeft.toString() + ","
+      + this.width + "," + this.height + ")");
   }
 }
 
